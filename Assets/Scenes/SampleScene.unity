@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 227883278}
   m_Layer: 0
   m_Name: Square (3)
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -238,9 +238,8 @@ GameObject:
   m_Component:
   - component: {fileID: 325629445}
   - component: {fileID: 325629446}
-  - component: {fileID: 325629448}
   - component: {fileID: 325629449}
-  - component: {fileID: 325629450}
+  - component: {fileID: 325629451}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: Untagged
@@ -257,7 +256,7 @@ Transform:
   m_GameObject: {fileID: 325629444}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.6292495, y: 1.13, z: 0}
+  m_LocalPosition: {x: -1.6292495, y: 4.09, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -318,22 +317,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &325629448
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 325629444}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2275506873def14180b37ee58af13bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 0.1
-  runMult: 1.5
-  gravity: -8.2
-  jumpSpeed: 1.8
 --- !u!143 &325629449
 CharacterController:
   m_ObjectHideFlags: 0
@@ -359,7 +342,7 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &325629450
+--- !u!114 &325629451
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -368,15 +351,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 325629444}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d74edc5f1966c148a8eca7d3a830fbc, type: 3}
+  m_Script: {fileID: 11500000, guid: 46a08ab87107394438f83c87a008ee60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  gravity: -200
-  jump: 25
-  sprint: 1.5
-  wallSpeed: -2
-  wallMult: 20
+  gravity: -60
+  wallVelocity: -2
+  jumpVelocity: 20
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -484,7 +465,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6.4
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -734,7 +715,7 @@ GameObject:
   - component: {fileID: 1060627875}
   m_Layer: 0
   m_Name: Square (2)
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -843,7 +824,7 @@ GameObject:
   - component: {fileID: 1177092019}
   m_Layer: 0
   m_Name: Square (1)
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -952,7 +933,7 @@ GameObject:
   - component: {fileID: 1425371184}
   m_Layer: 0
   m_Name: Square (4)
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1061,7 +1042,7 @@ GameObject:
   - component: {fileID: 1504364640}
   m_Layer: 0
   m_Name: Square
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

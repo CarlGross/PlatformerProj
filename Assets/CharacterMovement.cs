@@ -63,7 +63,7 @@ public class CharacterMovement : MonoBehaviour
         else
         {
             xFactor = 0f;
-        }
+        }      
 
         if (airStall > 0f)
         {
@@ -187,6 +187,7 @@ public class CharacterMovement : MonoBehaviour
 
     }
 
+   
 
     bool wallFuck()
     {
