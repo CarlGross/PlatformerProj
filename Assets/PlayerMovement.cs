@@ -1,5 +1,7 @@
 using System;
 using System.Data;
+// using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -17,8 +19,13 @@ public class PlayerMovement : MonoBehaviour
         AirStalling
 
     }
+
+
+
+    public Vector3 lastDirection = Vector3.right;
     public static PlayerState state;
-    private float xInput = 0f;
+
+    public float xInput = 0f;
 
     private bool space = false;
 
@@ -52,15 +59,24 @@ public class PlayerMovement : MonoBehaviour
 
     private bool canAirStall = true;
 
-    private float wallJumpBoost = 0f;
-
-    private float wallJumpBoostTimer = 0f;
-
     private float leftWallCooldown = 0f;
 
     private float rightWallCooldown = 0f;
 
     private bool shortJump = false;
+
+    public float maxspeed = 20f;
+
+    public float sprintSpeed = 1f;
+
+    private float lastXInput = 0f;
+
+    public float yInput;
+
+    public float attackTime = 0f;
+
+    public float attackCooldown = 0f;
+
 
     void Start()
     {
@@ -130,14 +146,58 @@ public class PlayerMovement : MonoBehaviour
 
     void Inputs()
     {
+        lastXInput = xInput;
+        yInput = Input.GetAxis("Vertical");
         xInput = Input.GetAxis("Horizontal");
         space = Input.GetKeyDown(KeyCode.Space);
         spaceUp = Input.GetKeyUp(KeyCode.Space);
-        action = Input.GetKeyDown(KeyCode.E);
+        action = Input.GetKeyDown(KeyCode.I);
         sprint = Input.GetKey(KeyCode.LeftShift);
+        if (xInput != 0)
+        {
+            if (xInput > 0f)
+            {
+                lastDirection = Vector3.right;
+            }
+            else
+            {
+                lastDirection = Vector3.left;
+            }
+        }
+       
     }
 
-    void HandleIdle()
+    void GeneralMove()
+    {
+        if (action && attackTime <= 0f && attackCooldown <= 0f)
+        {
+            attackCooldown = 1f;
+            attackTime = 0.5f;
+        }
+        if (attackTime > 0f)
+        {
+            Attack();
+        }
+        print(attackTime);
+        // hitbox.MoveHitBox();
+
+        float xVelocity = xInput * speed * mult;
+       // If you want to clamp max speed
+        // if (Math.Abs(xVelocity) > maxspeed)
+        // {
+        //     if (xVelocity < 0)
+        //     {
+        //         xVelocity = -maxspeed;
+        //     }
+        //     else
+        //     {
+        //         xVelocity = maxspeed;
+        //     }
+        // }
+         controller.Move(new Vector3(xVelocity * Time.deltaTime, verticalVelocity * Time.deltaTime, 0f));
+    }
+
+    void GroundActions()
     {
         shortJump = false;
         canAirStall = true;
@@ -149,11 +209,24 @@ public class PlayerMovement : MonoBehaviour
             velocityInitial = jumpVelocity;
             verticalVelocity = velocityInitial;
         }
-        controller.Move(new Vector3(0f, verticalVelocity * Time.deltaTime, 0f));
+        GeneralMove();
+    }
+    void HandleIdle()
+    {
+        GroundActions();
     }
 
     void Timer()
     {
+        if (attackCooldown > 0f)
+        {
+            attackCooldown -= Time.deltaTime;
+        }
+        if (attackTime > 0f)
+        {
+            attackTime -= Time.deltaTime;
+        }
+
         if (leftWallCooldown > 0f)
         {
             leftWallCooldown -= Time.deltaTime;
@@ -169,14 +242,6 @@ public class PlayerMovement : MonoBehaviour
             boost -= Time.deltaTime;
         }
 
-        if (wallJumpBoostTimer > 0f)
-        {
-            wallJumpBoostTimer -= Time.deltaTime;
-        }
-        else
-        {
-            wallJumpBoost = 0f;
-        }
 
 
         if (airStallTimer > 0f)
@@ -194,37 +259,75 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    bool ChangeDirections()
+    {
+        if (xInput != lastXInput)
+        {
+            return true;
+        }
+        return false;
+    }
+
     void HandleRunning()
     {
-        shortJump = false;
-        canAirStall = true;
-        verticalVelocity = -1f;
-        velocityInitial = 0f;
-        time = 0f;
-        if (space)
+        
+        if (ChangeDirections())
         {
-            velocityInitial = jumpVelocity;
-            verticalVelocity = velocityInitial;
-        }
-        if (action && boost <= 0f)
-        {
-            boost = 1f;
+            boost = 0f;
+            sprintSpeed = 1f;
         }
         mult = 1f;
+        if (action && sprintSpeed > 1f && boost <= 0f && attackCooldown <= 0f)
+        {
+            if (sprintSpeed < 2f)
+            {
+                sprintSpeed = 2.5f;
+            }
+            else
+            {
+                sprintSpeed = 3f;
+            }
+            boost = 0.5f;
+        }
         if (sprint)
         {
-            mult *= 2f;
+            if (sprintSpeed < 2f)
+            {
+                sprintSpeed += Time.deltaTime * 4;
+            }
+            else if (sprintSpeed < 2.5f)
+            {
+                sprintSpeed += Time.deltaTime * 3;
+            }
+            else if (boost <= 0f)
+            {
+                if (sprintSpeed > 2.5f)
+                {
+                    sprintSpeed -= Time.deltaTime * 4;
+                }
+                
+            }
+            mult *= sprintSpeed;
         }
-        if (boost > 0f)
+        else
         {
-            mult *= 1.5f;
+            if (sprintSpeed > 1f)
+            {
+                sprintSpeed -= Time.deltaTime * 4;
+            }
+            else
+            {
+                sprintSpeed = 1f;
+            }
+            mult *= sprintSpeed;
         }
-        controller.Move(new Vector3((wallJumpBoost + xInput * speed * mult) * Time.deltaTime, verticalVelocity * Time.deltaTime, 0f));
+        GroundActions();
     }
 
     void HandleAirStalling()
     {
-        controller.Move(new Vector3((wallJumpBoost + xInput * speed * mult) * Time.deltaTime, 0f, 0f));
+        verticalVelocity = 0f;
+        GeneralMove();
     }
 
     void ApplyGravity()
@@ -256,16 +359,16 @@ public class PlayerMovement : MonoBehaviour
         HandleInAir();
         if (shortJump)
         {
-            verticalVelocity /= 2;
+            verticalVelocity /= 3;
         }
-        controller.Move(new Vector3((wallJumpBoost + xInput * speed * mult) * Time.deltaTime, verticalVelocity * Time.deltaTime, 0f));
+        GeneralMove();
 
     }
 
     void HandleFalling()
     {
         HandleInAir();
-        controller.Move(new Vector3((wallJumpBoost + xInput * speed * mult) * Time.deltaTime, verticalVelocity * Time.deltaTime, 0f));
+        GeneralMove();
     }
 
     void HandleLeftWall()
@@ -281,16 +384,16 @@ public class PlayerMovement : MonoBehaviour
         if (space)
         {
             velocityInitial = jumpVelocity;
-            wallJumpBoostTimer = 0.5f;
-            wallJumpBoost = 10f;
-            leftWallCooldown = 0.8f;
+            mult = mult * 3f / sprintSpeed;
+            sprintSpeed = 3f;
+            leftWallCooldown = 0.7f;
         }
         HandleInAir();
         if (Input.GetAxis("Horizontal") < 0f)
         {
             verticalVelocity = wallVelocity;
         }
-        controller.Move(new Vector3((wallJumpBoost + xInput * speed * mult) * Time.deltaTime, verticalVelocity * Time.deltaTime, 0f));
+        GeneralMove();
     }
 
     void HandleRightWall()
@@ -305,21 +408,22 @@ public class PlayerMovement : MonoBehaviour
         }
         if (space)
         {
+            mult = mult * 3f / sprintSpeed;
+            sprintSpeed = 3f;
             velocityInitial = jumpVelocity;
-            wallJumpBoostTimer = 0.5f;
-            wallJumpBoost = -10f;
-            rightWallCooldown = 0.8f;
+            rightWallCooldown = 0.7f;
         }
         HandleInAir();
         if (Input.GetAxis("Horizontal") > 0f)
         {
             verticalVelocity = wallVelocity;
         }
-        controller.Move(new Vector3((wallJumpBoost + xInput * speed * mult) * Time.deltaTime, verticalVelocity * Time.deltaTime, 0f));
+        GeneralMove();
     }
 
     void HandleWallSliding()
     {
+        shortJump = false;
         canAirStall = true;
         if (LeftWall())
         {
@@ -334,15 +438,96 @@ public class PlayerMovement : MonoBehaviour
 
     bool IsTouchingWall()
     {
-        return !controller.isGrounded && (Physics.Raycast(transform.position, new Vector3(-1f, 0f, 0f), 0.6f) || Physics.Raycast(transform.position, new Vector3(1f, 0f, 0f), 0.6f));
+
+        if (Physics.Raycast(transform.position, new Vector3(-1f, 0f, 0f), out RaycastHit hitLeft, 0.6f))
+        {
+            if (hitLeft.transform.CompareTag("Terrain"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        if (Physics.Raycast(transform.position, new Vector3(1f, 0f, 0f), out RaycastHit hitRight, 0.6f))
+        {
+            if (hitRight.transform.CompareTag("Terrain"))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        return false;
     }
 
     bool LeftWall()
     {
         return Physics.Raycast(transform.position, new Vector3(-1f, 0f, 0f), 0.6f);
     }
-    
 
+
+    void Attack()
+    {
+        Vector3 center;
+        Vector3 boxSize = new(0.6f, 2f, 1f);
+        Quaternion boxRot;
+        if (yInput > 0)
+        {
+            boxRot = Quaternion.Euler(0f, 0f, 90f);
+            center = transform.position + Vector3.up * 1.8f;
+        }
+         else if (yInput < 0)
+        {
+            boxRot = Quaternion.Euler(0f, 0f, 90f);
+            center = transform.position + Vector3.down * 1.8f;
+        }
+        else
+        {
+
+            boxRot = Quaternion.identity;
+            center = transform.position + lastDirection * 1.1f;
+        }
+        Collider[] hits = Physics.OverlapBox(center, boxSize / 2, boxRot);
+        foreach (Collider hit in hits)
+        {
+            if (hit.CompareTag("Enemy"))
+            {
+                Destroy(hit.gameObject);
+                canAirStall = true;
+            }
+        }  
+    }
+
+
+    private void OnDrawGizmos()
+    {
+        Vector3 center;
+        Vector3 boxSize = new(0.6f, 2f, 1f);
+        Quaternion boxRot;
+        if (yInput > 0)
+        {
+            boxRot = Quaternion.Euler(0f, 0f, 90f);
+            center = transform.position + Vector3.up * 1.8f;
+        }
+        else if (yInput < 0)
+        {
+            boxRot = Quaternion.Euler(0f, 0f, 90f);
+            center = transform.position + Vector3.down * 1.8f;
+        }
+        else
+        {
+
+            boxRot = Quaternion.identity;
+            center = transform.position + lastDirection * 1.1f;
+        }
+        Gizmos.color = Color.green;
+        Gizmos.matrix = Matrix4x4.TRS(center, boxRot, Vector3.one);
+        Gizmos.DrawWireCube(Vector3.zero, boxSize);
+    }
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
