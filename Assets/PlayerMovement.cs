@@ -20,6 +20,8 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    public int health = 2;
+
 
 
     public Vector3 lastDirection = Vector3.right;
@@ -37,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool sprint = false;
 
-    private float verticalVelocity = -1f;
+    public float verticalVelocity = -1f;
 
     private float airStallTimer = 0f;
 
@@ -77,14 +79,32 @@ public class PlayerMovement : MonoBehaviour
 
     public float attackCooldown = 0f;
 
+    public float airStallCooldown = 0f;
+
+    private int lastHealth;
+
+    public UIControl ui;
 
     void Start()
     {
+        ui.UpdateHealthText();
+        lastHealth = health;
         controller = GetComponent<CharacterController>();
+    }
+
+    void UIUpdate()
+    {
+        
+        if (health != lastHealth)
+        {
+            ui.UpdateHealthText();
+        }
+        lastHealth = health;
     }
 
     void Update()
     {
+        UIUpdate();
         Timer();
         Inputs();
         UpdateStatus();
@@ -164,25 +184,25 @@ public class PlayerMovement : MonoBehaviour
                 lastDirection = Vector3.left;
             }
         }
-       
+
     }
 
     void GeneralMove()
     {
         if (action && attackTime <= 0f && attackCooldown <= 0f)
         {
-            attackCooldown = 1f;
-            attackTime = 0.5f;
+            attackCooldown = 0.6f;
+            attackTime = 0.3f;
         }
         if (attackTime > 0f)
         {
             Attack();
         }
         print(attackTime);
-        // hitbox.MoveHitBox();
+        
 
         float xVelocity = xInput * speed * mult;
-       // If you want to clamp max speed
+        // If you want to clamp max x speed
         // if (Math.Abs(xVelocity) > maxspeed)
         // {
         //     if (xVelocity < 0)
@@ -194,7 +214,19 @@ public class PlayerMovement : MonoBehaviour
         //         xVelocity = maxspeed;
         //     }
         // }
-         controller.Move(new Vector3(xVelocity * Time.deltaTime, verticalVelocity * Time.deltaTime, 0f));
+        // If you want to clamp max y speed
+         if (Math.Abs(verticalVelocity) > maxspeed)
+        {
+            if (verticalVelocity < 0)
+            {
+                verticalVelocity = -maxspeed;
+            }
+            else
+            {
+                verticalVelocity = maxspeed;
+            }
+        }
+        controller.Move(new Vector3(xVelocity * Time.deltaTime, verticalVelocity * Time.deltaTime, 0f));
     }
 
     void GroundActions()
@@ -218,6 +250,10 @@ public class PlayerMovement : MonoBehaviour
 
     void Timer()
     {
+        if (airStallCooldown > 0f)
+        {
+            airStallCooldown -= Time.deltaTime;
+        }
         if (attackCooldown > 0f)
         {
             attackCooldown -= Time.deltaTime;
@@ -270,7 +306,7 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleRunning()
     {
-        
+
         if (ChangeDirections())
         {
             boost = 0f;
@@ -305,7 +341,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     sprintSpeed -= Time.deltaTime * 4;
                 }
-                
+
             }
             mult *= sprintSpeed;
         }
@@ -338,8 +374,9 @@ public class PlayerMovement : MonoBehaviour
     void HandleInAir()
     {
 
-        if (canAirStall && action && airStallTimer <= 0f)
+        if (canAirStall && action && airStallTimer <= 0f && airStallCooldown <= 0f)
         {
+            airStallCooldown = 0.6f;
             velocityInitial = 0f;
             time = 0f;
             airStallTimer = 0.3f;
@@ -480,7 +517,7 @@ public class PlayerMovement : MonoBehaviour
             boxRot = Quaternion.Euler(0f, 0f, 90f);
             center = transform.position + Vector3.up * 1.8f;
         }
-         else if (yInput < 0)
+        else if (yInput < 0)
         {
             boxRot = Quaternion.Euler(0f, 0f, 90f);
             center = transform.position + Vector3.down * 1.8f;
@@ -499,8 +536,9 @@ public class PlayerMovement : MonoBehaviour
                 Destroy(hit.gameObject);
                 canAirStall = true;
             }
-        }  
+        }
     }
+
 
 
     private void OnDrawGizmos()
@@ -529,11 +567,17 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.DrawWireCube(Vector3.zero, boxSize);
     }
 
-    void OnControllerColliderHit(ControllerColliderHit hit)
+
+    public void Bounce()
     {
-        if (hit.gameObject.CompareTag("Enemy"))
+        if (Input.GetKey(KeyCode.Space))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
+            shortJump = false;
+            spaceUp = false;
+       }
+        canAirStall = true;
+        time = 0f;
+        velocityInitial = jumpVelocity;
     }
+    
 }
