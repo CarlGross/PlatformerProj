@@ -12,10 +12,12 @@ public class PlayerMovement : MonoBehaviour
     public enum PlayerState
     {
         Idle,
+        Walking,
         Running,
         Jumping,
         Falling,
         WallSliding,
+        WallGrinding,
         AirStalling
 
     }
@@ -45,11 +47,11 @@ public class PlayerMovement : MonoBehaviour
 
     private float boost = 0f;
 
-    public float speed = 10f;
+    public float speed = 6f;
 
     private float mult = 1f;
 
-    public float gravity = -10f;
+    public float gravity = -110f;
 
     private float time = 0f;
 
@@ -57,13 +59,13 @@ public class PlayerMovement : MonoBehaviour
 
     private float velocityInitial = -1f;
 
-    public float jumpVelocity = 20f;
+    public float jumpVelocity = 35f;
 
     private bool canAirStall = true;
 
-    private float leftWallCooldown = 0f;
+    // private float leftWallCooldown = 0f;
 
-    private float rightWallCooldown = 0f;
+    // private float rightWallCooldown = 0f;
 
     private bool shortJump = false;
 
@@ -84,6 +86,17 @@ public class PlayerMovement : MonoBehaviour
     private int lastHealth;
 
     public UIControl ui;
+
+    private bool grind = false;
+
+    private float xLock = 1f;
+
+    private float multLock = 2.5f;
+
+    private float wallJumpTimer = 0f;
+
+    private bool CheckLastX = false;
+
 
     void Start()
     {
@@ -113,6 +126,9 @@ public class PlayerMovement : MonoBehaviour
             case PlayerState.Idle:
                 HandleIdle();
                 break;
+            case PlayerState.Walking:
+                HandleRunning();
+                break;
             case PlayerState.Running:
                 HandleRunning();
                 break;
@@ -123,6 +139,9 @@ public class PlayerMovement : MonoBehaviour
                 HandleFalling();
                 break;
             case PlayerState.WallSliding:
+                HandleWallSliding();
+                break;
+            case PlayerState.WallGrinding:
                 HandleWallSliding();
                 break;
             case PlayerState.AirStalling:
@@ -140,10 +159,15 @@ public class PlayerMovement : MonoBehaviour
             {
                 state = PlayerState.Idle;
             }
+            else if (mult < 2f)
+            {
+                state = PlayerState.Walking;
+            }
             else
             {
                 state = PlayerState.Running;
             }
+
         }
         else if (airStallTimer > 0f)
         {
@@ -153,14 +177,24 @@ public class PlayerMovement : MonoBehaviour
         {
             state = PlayerState.Jumping;
         }
-        else if (IsTouchingWall() && ((leftWallCooldown <= 0 && LeftWall()) || (rightWallCooldown <= 0 && !LeftWall())))
+        //for wall cooldown way
+        //else if (IsTouchingWall() && ((leftWallCooldown <= 0 && LeftWall()) || (rightWallCooldown <= 0 && !LeftWall())))
+        else if (IsTouchingWall())
         {
-            state = PlayerState.WallSliding;
+            if (grind)
+            {
+                state = PlayerState.WallGrinding;
+            }
+            else
+            {
+                state = PlayerState.WallSliding;
+            }
         }
         else
         {
             state = PlayerState.Falling;
         }
+        print(state);
 
     }
 
@@ -187,6 +221,14 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    void LockX()
+    {
+        CheckLastX = true;
+        xInput = xLock;
+        mult = multLock;
+    }
+
+
     void GeneralMove()
     {
         if (action && attackTime <= 0f && attackCooldown <= 0f)
@@ -198,7 +240,21 @@ public class PlayerMovement : MonoBehaviour
         {
             Attack();
         }
-        print(attackTime);
+
+        if (boost > 0f || wallJumpTimer > 0f)
+        {
+            LockX();
+        }
+        else if (CheckLastX)
+        {
+            if (xInput != xLock)
+            {
+                mult = 1f;
+                sprintSpeed = 1f;
+            }
+            CheckLastX = false;
+        }
+        
         
 
         float xVelocity = xInput * speed * mult;
@@ -250,6 +306,11 @@ public class PlayerMovement : MonoBehaviour
 
     void Timer()
     {
+        if (wallJumpTimer > 0f)
+        {
+            wallJumpTimer -= Time.deltaTime;
+        }
+
         if (airStallCooldown > 0f)
         {
             airStallCooldown -= Time.deltaTime;
@@ -263,15 +324,15 @@ public class PlayerMovement : MonoBehaviour
             attackTime -= Time.deltaTime;
         }
 
-        if (leftWallCooldown > 0f)
-        {
-            leftWallCooldown -= Time.deltaTime;
-        }
+        // if (leftWallCooldown > 0f)
+        // {
+        //     leftWallCooldown -= Time.deltaTime;
+        // }
 
-        else if (rightWallCooldown > 0f)
-        {
-            rightWallCooldown -= Time.deltaTime;
-        }
+        // else if (rightWallCooldown > 0f)
+        // {
+        //     rightWallCooldown -= Time.deltaTime;
+        // }
 
         if (boost > 0f)
         {
@@ -309,7 +370,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (ChangeDirections())
         {
-            boost = 0f;
+            // boost = 0f;
             sprintSpeed = 1f;
         }
         mult = 1f;
@@ -324,6 +385,8 @@ public class PlayerMovement : MonoBehaviour
                 sprintSpeed = 3f;
             }
             boost = 0.5f;
+            multLock = sprintSpeed;
+            xLock = xInput;
         }
         if (sprint)
         {
@@ -410,8 +473,8 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleLeftWall()
     {
-
-        rightWallCooldown = 0f;
+        grind = false;
+        // rightWallCooldown = 0f;
 
         if (Input.GetAxis("Horizontal") < 0f)
         {
@@ -420,23 +483,28 @@ public class PlayerMovement : MonoBehaviour
         }
         if (space)
         {
+            wallJumpTimer = 0.5f;
             velocityInitial = jumpVelocity;
-            mult = mult * 3f / sprintSpeed;
+            // mult = mult * 3f / sprintSpeed;
             sprintSpeed = 3f;
-            leftWallCooldown = 0.7f;
+            xLock = 1f;
+            multLock = 3f;
+            // leftWallCooldown = 0.7f;
         }
         HandleInAir();
         if (Input.GetAxis("Horizontal") < 0f)
         {
+            state = PlayerState.WallGrinding;
             verticalVelocity = wallVelocity;
+            grind = true;
         }
         GeneralMove();
     }
 
     void HandleRightWall()
     {
-
-        leftWallCooldown = 0f;
+        grind = false;
+        // leftWallCooldown = 0f;
 
         if (Input.GetAxis("Horizontal") > 0f)
         {
@@ -445,14 +513,18 @@ public class PlayerMovement : MonoBehaviour
         }
         if (space)
         {
-            mult = mult * 3f / sprintSpeed;
+            // mult = mult * 3f / sprintSpeed;
+            wallJumpTimer = 0.5f;
             sprintSpeed = 3f;
+            xLock = -1f;
+            multLock = 3f;
             velocityInitial = jumpVelocity;
-            rightWallCooldown = 0.7f;
+            // rightWallCooldown = 0.7f;
         }
         HandleInAir();
         if (Input.GetAxis("Horizontal") > 0f)
         {
+            grind = true;
             verticalVelocity = wallVelocity;
         }
         GeneralMove();
