@@ -24,7 +24,7 @@ public class PlayerMovement : MonoBehaviour
 
     public int health = 2;
 
-
+    public bool activeController = true;
 
     public Vector3 lastDirection = Vector3.right;
     public static PlayerState state;
@@ -49,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
 
     public float speed = 6f;
 
-    private float mult = 1f;
+    public float mult = 1f;
 
     public float gravity = -110f;
 
@@ -117,38 +117,11 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        UIUpdate();
-        Timer();
-        Inputs();
-        UpdateStatus();
-        switch (state)
-        {
-            case PlayerState.Idle:
-                HandleIdle();
-                break;
-            case PlayerState.Walking:
-                HandleRunning();
-                break;
-            case PlayerState.Running:
-                HandleRunning();
-                break;
-            case PlayerState.Jumping:
-                HandleJumping();
-                break;
-            case PlayerState.Falling:
-                HandleFalling();
-                break;
-            case PlayerState.WallSliding:
-                HandleWallSliding();
-                break;
-            case PlayerState.WallGrinding:
-                HandleWallSliding();
-                break;
-            case PlayerState.AirStalling:
-                HandleAirStalling();
-                break;
-
-        }
+            UIUpdate();
+            Timer();
+            Inputs();
+            UpdateStatus();
+            HandleState();
     }
 
     void UpdateStatus()
@@ -196,6 +169,32 @@ public class PlayerMovement : MonoBehaviour
         }
         print(state);
 
+    }
+
+    void HandleState() {
+         switch (state)
+            {
+                case PlayerState.Idle:
+                    HandleIdle();
+                    break;
+                case PlayerState.Walking:
+                case PlayerState.Running:
+                    HandleRunning();
+                    break;
+                case PlayerState.Jumping:
+                    HandleJumping();
+                    break;
+                case PlayerState.Falling:
+                    HandleFalling();
+                    break;
+                case PlayerState.WallSliding:
+                case PlayerState.WallGrinding:
+                    HandleWallSliding();
+                    break;
+                case PlayerState.AirStalling:
+                    HandleAirStalling();
+                    break;
+            }
     }
 
     void Inputs()
