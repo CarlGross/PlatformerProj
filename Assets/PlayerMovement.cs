@@ -97,12 +97,16 @@ public class PlayerMovement : MonoBehaviour
 
     private bool CheckLastX = false;
 
+    //JOSHUA_ADDEDCODE
+    private Animator animator;
 
     void Start()
     {
         ui.UpdateHealthText();
         lastHealth = health;
         controller = GetComponent<CharacterController>();
+        //JOSHUA_ADDEDCODE
+        animator = GetComponent<Animator>();
     }
 
     void UIUpdate()
@@ -124,31 +128,52 @@ public class PlayerMovement : MonoBehaviour
             HandleState();
     }
 
+    //JOSHUA_ADDEDCODE
+    void SetPlayerState(PlayerState newState)
+    {
+            state = newState;
+            animator.SetFloat("PlayerState", (float)newState);
+    }
+
     void UpdateStatus()
     {
+        // JOSHUA ADDED FOR SEAMLESS SYNC
+        animator.SetFloat("mult", mult);
+        animator.SetFloat("yvel", verticalVelocity);
+
         if (controller.isGrounded)
         {
             if (xInput == 0)
             {
                 state = PlayerState.Idle;
+                //JOSHUA_ADDEDCODE
+                SetPlayerState(PlayerState.Idle);
             }
             else if (mult < 2f)
             {
                 state = PlayerState.Walking;
+                //JOSHUA_ADDEDCODE
+                SetPlayerState(PlayerState.Walking);
             }
             else
             {
                 state = PlayerState.Running;
+                //JOSHUA_ADDEDCODE
+                SetPlayerState(PlayerState.Running);
             }
 
         }
         else if (airStallTimer > 0f)
         {
             state = PlayerState.AirStalling;
+            //JOSHUA_ADDEDCODE
+            SetPlayerState(PlayerState.AirStalling);
         }
         else if (verticalVelocity > 0f)
         {
             state = PlayerState.Jumping;
+            //JOSHUA_ADDEDCODE
+            SetPlayerState(PlayerState.Jumping);
         }
         //for wall cooldown way
         //else if (IsTouchingWall() && ((leftWallCooldown <= 0 && LeftWall()) || (rightWallCooldown <= 0 && !LeftWall())))
@@ -157,15 +182,22 @@ public class PlayerMovement : MonoBehaviour
             if (grind)
             {
                 state = PlayerState.WallGrinding;
+                //JOSHUA_ADDEDCODE
+                SetPlayerState(PlayerState.WallGrinding);
             }
             else
             {
                 state = PlayerState.WallSliding;
+                //JOSHUA_ADDEDCODE
+                SetPlayerState(PlayerState.WallSliding);
+
             }
         }
         else
         {
             state = PlayerState.Falling;
+            //JOSHUA_ADDEDCODE
+            SetPlayerState(PlayerState.Falling);
         }
         print(state);
 
@@ -211,10 +243,14 @@ public class PlayerMovement : MonoBehaviour
             if (xInput > 0f)
             {
                 lastDirection = Vector3.right;
+                //JOSHUA CODE FOR FLIPPING CHARACTER SPRITE
+                transform.localScale = new Vector3(3, 3, 3);
             }
             else
             {
                 lastDirection = Vector3.left;
+                //JOSHUA CODE FOR FLIPPING CHARACTER SPRITE
+                transform.localScale = new Vector3(-3, 3, 3);
             }
         }
 
