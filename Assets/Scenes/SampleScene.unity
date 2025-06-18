@@ -472,7 +472,6 @@ MonoBehaviour:
   mult: 1
   gravity: -110
   wallVelocity: -2
-  jumpVelocity: 35
   maxspeed: 25
   sprintSpeed: 1
   yInput: 0
@@ -482,6 +481,129 @@ MonoBehaviour:
   ui: {fileID: 2029326997}
   prevPos: {x: 0, y: 0, z: 0}
   dir: 0
+--- !u!1 &327392313
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 327392317}
+  - component: {fileID: 327392316}
+  - component: {fileID: 327392315}
+  - component: {fileID: 327392314}
+  m_Layer: 0
+  m_Name: BoostPad (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &327392314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327392313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b2d54a770a7a3d4ca84ef4e885231ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  magnitude: 80
+--- !u!65 &327392315
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327392313}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!212 &327392316
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327392313}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Color: {r: 0.12873618, g: 0.23431827, b: 0.4641509, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
+--- !u!4 &327392317
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 327392313}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 23.65, y: -10.56, z: 0}
+  m_LocalScale: {x: 2.66, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &353459130
 GameObject:
   m_ObjectHideFlags: 0
@@ -1145,13 +1267,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 0
+  projectile: 0
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 0}
   target: {fileID: 325629444}
   follow: 1
   canFloat: 0
   boundlessfloat: 0
   speed: 8
   damage: 1
-  jumpBuffer: 0.5
 --- !u!212 &552395460
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1366,13 +1491,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 1
+  projectile: 0
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 0}
   target: {fileID: 0}
   follow: 0
   canFloat: 0
   boundlessfloat: 0
   speed: 4
   damage: 1
-  jumpBuffer: 0.2
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -1580,13 +1708,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 1
-  target: {fileID: 0}
+  projectile: 1
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 5012514470484753143, guid: fbfeadf9770dd844a91cf15a19e40350, type: 3}
+  target: {fileID: 325629444}
   follow: 0
   canFloat: 0
   boundlessfloat: 0
   speed: 4
   damage: 1
-  jumpBuffer: 0.5
 --- !u!1 &634973190
 GameObject:
   m_ObjectHideFlags: 0
@@ -1698,13 +1829,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 0
+  projectile: 0
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 0}
   target: {fileID: 325629444}
   follow: 1
   canFloat: 1
   boundlessfloat: 0
   speed: 8
   damage: 1
-  jumpBuffer: 0
 --- !u!212 &641582426
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2137,13 +2271,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 1
+  projectile: 0
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 0}
   target: {fileID: 0}
   follow: 0
   canFloat: 0
   boundlessfloat: 0
   speed: 4
   damage: 1
-  jumpBuffer: 0.6
 --- !u!1 &724272203
 GameObject:
   m_ObjectHideFlags: 0
@@ -2503,13 +2640,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 1
+  projectile: 0
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 0}
   target: {fileID: 0}
   follow: 0
   canFloat: 0
   boundlessfloat: 0
   speed: 4
   damage: 1
-  jumpBuffer: 1.1
 --- !u!65 &906135791
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2724,13 +2864,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 1
+  projectile: 0
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 0}
   target: {fileID: 0}
   follow: 0
   canFloat: 0
   boundlessfloat: 0
   speed: 4
   damage: 1
-  jumpBuffer: 0.2
 --- !u!1 &1060627874
 GameObject:
   m_ObjectHideFlags: 0
@@ -3072,13 +3215,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 1
+  projectile: 0
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 0}
   target: {fileID: 0}
   follow: 0
   canFloat: 0
   boundlessfloat: 0
   speed: 4
   damage: 1
-  jumpBuffer: 0.2
 --- !u!1 &1177092018
 GameObject:
   m_ObjectHideFlags: 0
@@ -3311,13 +3457,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 1
+  projectile: 0
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 0}
   target: {fileID: 0}
   follow: 0
   canFloat: 0
   boundlessfloat: 0
   speed: 4
   damage: 1
-  jumpBuffer: 0.2
 --- !u!1 &1325607181
 GameObject:
   m_ObjectHideFlags: 0
@@ -3812,13 +3961,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 1
+  projectile: 0
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 0}
   target: {fileID: 0}
   follow: 0
   canFloat: 0
   boundlessfloat: 0
   speed: 4
   damage: 1
-  jumpBuffer: 0.2
 --- !u!1 &1641131444
 GameObject:
   m_ObjectHideFlags: 0
@@ -4051,13 +4203,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 1
+  projectile: 0
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 0}
   target: {fileID: 0}
   follow: 0
   canFloat: 0
   boundlessfloat: 0
   speed: 4
   damage: 1
-  jumpBuffer: 0.2
 --- !u!1 &1679972882
 GameObject:
   m_ObjectHideFlags: 0
@@ -4181,13 +4336,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 1
+  projectile: 0
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 0}
   target: {fileID: 0}
   follow: 0
   canFloat: 0
   boundlessfloat: 0
   speed: 4
   damage: 1
-  jumpBuffer: 0.2
 --- !u!1 &1698927122
 GameObject:
   m_ObjectHideFlags: 0
@@ -4220,13 +4378,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 1
+  projectile: 0
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 0}
   target: {fileID: 0}
   follow: 0
   canFloat: 0
   boundlessfloat: 0
   speed: 4
   damage: 1
-  jumpBuffer: 0
 --- !u!212 &1698927125
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4525,6 +4686,129 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 66.41, y: -2.0195599, z: 0}
   m_LocalScale: {x: 53.944847, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2021131230
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2021131234}
+  - component: {fileID: 2021131233}
+  - component: {fileID: 2021131232}
+  - component: {fileID: 2021131231}
+  m_Layer: 0
+  m_Name: BoostPad
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2021131231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2021131230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b2d54a770a7a3d4ca84ef4e885231ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  magnitude: 80
+--- !u!65 &2021131232
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2021131230}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 0.2}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!212 &2021131233
+SpriteRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2021131230}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Color: {r: 0.12873618, g: 0.23431827, b: 0.4641509, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 1, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
+  m_SpriteSortPoint: 0
+--- !u!4 &2021131234
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2021131230}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 76.78, y: 0.19, z: 0}
+  m_LocalScale: {x: 2.66, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -4853,13 +5137,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bouncy: 1
+  projectile: 0
+  fireRate: 3
+  fireSpeed: 5
+  projectilePrefab: {fileID: 0}
   target: {fileID: 0}
   follow: 0
   canFloat: 0
   boundlessfloat: 0
   speed: 4
   damage: 1
-  jumpBuffer: 1.1
 --- !u!65 &2139510759
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4997,3 +5284,5 @@ SceneRoots:
   - {fileID: 664410136}
   - {fileID: 1641131447}
   - {fileID: 428582612}
+  - {fileID: 2021131234}
+  - {fileID: 327392317}

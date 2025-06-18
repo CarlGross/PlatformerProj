@@ -64,7 +64,7 @@ public class PlayerMovement : MonoBehaviour
 
     private float velocityInitial = -1f;
 
-    public float jumpVelocity = 35f;
+    public const float jumpVelocity = 35f;
 
     private bool canAirStall = true;
 
@@ -433,14 +433,24 @@ public class PlayerMovement : MonoBehaviour
         if (canAirStall && action && airStallTimer <= 0f && airStallCooldown <= 0f)
         {
             airStallCooldown = 0.6f;
-            velocityInitial = 0f;
-            time = 0f;
+            StopJump();
             airStallTimer = 0.3f;
             canAirStall = false;
         }
 
         ApplyGravity();
 
+    }
+
+    bool CheckHead()
+    {
+        return Physics.Raycast(transform.position, Vector3.up, out RaycastHit hit, 1.3f) && hit.transform.CompareTag("Terrain");
+    }
+
+    void StopJump()
+    {
+        velocityInitial = 0f;
+        time = 0f;
     }
 
     void HandleJumping()
@@ -453,6 +463,10 @@ public class PlayerMovement : MonoBehaviour
         if (shortJump)
         {
             verticalVelocity /= 3;
+        }
+        if (CheckHead())
+        {
+            StopJump();
         }
         GeneralMove();
 
@@ -468,8 +482,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetAxis("Horizontal") < 0f)
         {
-            time = 0f;
-            velocityInitial = 0f;
+            StopJump();
         }
         if (space)
         {
@@ -493,8 +506,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetAxis("Horizontal") > 0f)
         {
-            time = 0f;
-            velocityInitial = 0f;
+            StopJump();
         }
         if (space)
         {
@@ -648,7 +660,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    public void Bounce()
+    public void Bounce(float magnitude = jumpVelocity)
     {
         if (Input.GetKey(KeyCode.Space))
         {
@@ -661,18 +673,18 @@ public class PlayerMovement : MonoBehaviour
         }
         canAirStall = true;
         time = 0f;
-        velocityInitial = jumpVelocity;
+        velocityInitial = magnitude;
     }
 
     void HandleRingHanging()
     {
         if (transform.position != ring.transform.position)
         {
-            float ringSpeed = 5f * Time.deltaTime;
+            float ringSpeed = 10f * Time.deltaTime;
             Vector3 dir = (ring.transform.position - transform.position).normalized;
             controller.Move(ringSpeed * dir);
         }
-        mult = 2f;
+        mult = 2.5f;
         HandleAttack();
         if (space)
         {
@@ -682,9 +694,20 @@ public class PlayerMovement : MonoBehaviour
         else if (yInput < 0f)
         {
             onRing = false;
-            velocityInitial = 0f;
-            time = 0f;
+            StopJump();
         }
+    }
+
+    public void Damage(int dam)
+    {
+         if (health <= dam)
+                {
+                    SceneControl.resetScene();
+                }
+                else
+                {
+                    health -= dam;
+                }
     }
 
     void OnTriggerEnter(Collider other)

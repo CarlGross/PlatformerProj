@@ -11,6 +11,16 @@ public class EnemyScript : MonoBehaviour
 
     public bool bouncy = true;
 
+    public bool projectile = false;
+
+    public float fireRate = 3f;
+
+    public float fireSpeed = 5f;
+
+    public GameObject projectilePrefab;
+
+    private float fireCoolDown = 0f;
+
     public GameObject target;
 
     public bool follow = false;
@@ -27,7 +37,7 @@ public class EnemyScript : MonoBehaviour
 
     private Vector3 direction;
 
-    public float jumpBuffer = 0f;
+    
 
 
 
@@ -39,17 +49,26 @@ public class EnemyScript : MonoBehaviour
 
     void Update()
     {
+        if (projectile)
+        {
+            Timer();
+            if (fireCoolDown <= 0f)
+            {
+                fireCoolDown = fireRate;
+                Fire();
+            }
+        }
         if (follow)
         {
             Vector3 t = target.transform.position;
             Vector3 e = transform.position;
-            float distance = (float) Math.Sqrt(Math.Pow(t.x - e.x, 2.0) + Math.Pow(t.y - e.y, 2.0));
+            float distance = (float)Math.Sqrt(Math.Pow(t.x - e.x, 2.0) + Math.Pow(t.y - e.y, 2.0));
             if (distance < followDistance)
             {
                 if (canFloat)
                 {
                     direction = (t - e).normalized;
-                    if (!boundlessfloat && Physics.Raycast(transform.position, direction, out RaycastHit hit, 3f) && !hit.transform.CompareTag("Player") && !hit.transform.CompareTag("Ring")) 
+                    if (!boundlessfloat && Physics.Raycast(transform.position, direction, out RaycastHit hit, 3f) && !hit.transform.CompareTag("Player") && !hit.transform.CompareTag("Ring"))
                     {
                         direction = Vector3.zero;
                     }
@@ -65,9 +84,24 @@ public class EnemyScript : MonoBehaviour
                         direction = Vector3.zero;
                     }
                 }
-                transform.position += speed * Time.deltaTime * direction;                
+                transform.position += speed * Time.deltaTime * direction;
             }
         }
+    }
+
+    void Timer()
+    {
+        if (fireCoolDown > 0f)
+        {
+            fireCoolDown -= Time.deltaTime;
+        }
+    }
+
+    void Fire()
+    {
+        GameObject obj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+        obj.GetComponent<ProjectileMovement>().SetDir((target.transform.position - transform.position).normalized);
+        obj.GetComponent<ProjectileMovement>().SetSpeed(fireSpeed);
     }
 
     void OnTriggerEnter(Collider other)
@@ -82,14 +116,7 @@ public class EnemyScript : MonoBehaviour
             }
             else
             {
-                if (playerMove.health <= damage)
-                {
-                    SceneControl.resetScene();
-                }
-                else
-                {
-                    playerMove.health -= damage;
-                }
+                playerMove.Damage(damage);
             }
         }
 }
