@@ -6,12 +6,12 @@ TagManager:
   tags:
   - Enemy
   - Terrain
-  - Rope
+  - Ring
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Enemy
   - Water
   - UI
   - 

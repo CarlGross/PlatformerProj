@@ -2,7 +2,9 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using TreeEditor;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Android;
 
 public class EnemyScript : MonoBehaviour
 {
@@ -25,21 +27,14 @@ public class EnemyScript : MonoBehaviour
 
     private Vector3 direction;
 
+    public float jumpBuffer = 0f;
+
 
 
     bool IsBounce(PlayerMovement player)
     {
-        float lastFrameMove = player.verticalVelocity * Time.deltaTime;
-        float playerPos = player.transform.position.y;
-        float lastFrameHeight = playerPos - lastFrameMove;
-        if (lastFrameHeight > transform.position.y)
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        int mask = LayerMask.GetMask("Enemy");
+        return Physics.SphereCast(new(transform.position.x, player.prevPos.y + 1.2f, 0f), 1.1f, Vector3.down, out RaycastHit hit, 5f, mask);
     }
 
     void Update()
@@ -54,7 +49,7 @@ public class EnemyScript : MonoBehaviour
                 if (canFloat)
                 {
                     direction = (t - e).normalized;
-                    if (!boundlessfloat && Physics.Raycast(transform.position, direction, out RaycastHit hit, 3f) && !hit.transform.CompareTag("Player"))
+                    if (!boundlessfloat && Physics.Raycast(transform.position, direction, out RaycastHit hit, 3f) && !hit.transform.CompareTag("Player") && !hit.transform.CompareTag("Ring")) 
                     {
                         direction = Vector3.zero;
                     }
@@ -63,7 +58,9 @@ public class EnemyScript : MonoBehaviour
                 {
                     float buffer = 1.1f;
                     direction = new Vector3(t.x - e.x, 0f, 0f).normalized;
-                    if (!Physics.Raycast(transform.position + speed * Time.deltaTime * direction * buffer, Vector3.down, out RaycastHit hit, 1f) || hit.transform.CompareTag("Enemy"))
+                    bool rayDown = !Physics.Raycast(transform.position + speed * Time.deltaTime * direction * buffer, Vector3.down, out RaycastHit hit, 1f) || hit.transform.CompareTag("Enemy");
+                    bool rayForward = Physics.Raycast(transform.position, direction, out hit, 0.6f) && !hit.transform.CompareTag("Player");
+                    if (rayDown || rayForward)
                     {
                         direction = Vector3.zero;
                     }

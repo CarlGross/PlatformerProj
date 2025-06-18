@@ -10,66 +10,67 @@ public class CameraFollow : MonoBehaviour
     private float Xoffset = 0f;
     private float currHeight;
 
-    private float camHeight;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         currHeight = obj.transform.position.y + 2f;
         playermov = obj.GetComponent<PlayerMovement>();
     }
-
-    // Update is called once per frame
     void Update()
     {
-        float x = playermov.xInput;
-        float speed = playermov.sprintSpeed;
-        float playerHeight = obj.transform.position.y;
-
-        if (x > 0f)
+        if (PlayerMovement.state != PlayerMovement.PlayerState.RingHanging)
         {
-            if (Xoffset < x * 4f)
+
+
+            float x = playermov.xInput;
+            float speed = playermov.sprintSpeed;
+            float playerHeight = obj.transform.position.y;
+
+            if (x > 0f)
             {
-                Xoffset += Time.deltaTime * speed;
+                if (Xoffset < x * 4f)
+                {
+                    Xoffset += Time.deltaTime * speed;
+                }
             }
-        }
-        else if (x < 0f)
-        {
-            if (Xoffset > x * 4f)
+            else if (x < 0f)
             {
-                Xoffset -= Time.deltaTime * speed;
+                if (Xoffset > x * 4f)
+                {
+                    Xoffset -= Time.deltaTime * speed;
+                }
             }
-        }
 
-        if (currHeight + 10f < playerHeight)
-        {
-            currHeight += 40 * Time.deltaTime;
-        }
-        else if (currHeight + 6f < playerHeight)
-        {
-            currHeight += 12 * Time.deltaTime;
-        }
-        else if (currHeight + 3f < playerHeight)
-        {
-            currHeight += 2 * Time.deltaTime;
-        }
+            if (currHeight + 10f < playerHeight)
+            {
+                currHeight += 40 * Time.deltaTime;
+            }
+            else if (currHeight + 6f < playerHeight)
+            {
+                currHeight += 12 * Time.deltaTime;
+            }
+            else if (currHeight + 3f < playerHeight)
+            {
+                currHeight += 2 * Time.deltaTime;
+            }
 
-         if (currHeight > playerHeight + 10f)
-        {
-            currHeight -= 40 * Time.deltaTime;
-        }
-        else if (currHeight > playerHeight + 6f)
-        {
-            currHeight -= 12 * Time.deltaTime;
-        }
-        else if (currHeight > playerHeight + 3f)
-        {
-            currHeight -= 2 * Time.deltaTime;
-        }
-        
+            if (currHeight > playerHeight + 10f)
+            {
+                currHeight -= 40 * Time.deltaTime;
+            }
+            else if (currHeight > playerHeight + 6f)
+            {
+                currHeight -= 12 * Time.deltaTime;
+            }
+            else if (currHeight > playerHeight + 3f)
+            {
+                currHeight -= 2 * Time.deltaTime;
+            }
 
-        transform.position = new Vector3(obj.transform.position.x + Xoffset, currHeight, -10f);
-        
 
+
+            transform.position = new Vector3(obj.transform.position.x + Xoffset, currHeight, -10f);
+
+        }
         
     }
 }
