@@ -239,7 +239,7 @@ GameObject:
   - component: {fileID: 190611188}
   - component: {fileID: 190611187}
   - component: {fileID: 190611186}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (11)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -348,7 +348,7 @@ GameObject:
   - component: {fileID: 227883280}
   - component: {fileID: 227883279}
   - component: {fileID: 227883278}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (3)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -567,7 +567,7 @@ GameObject:
   - component: {fileID: 325629446}
   - component: {fileID: 325629449}
   - component: {fileID: 325629451}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -833,7 +833,7 @@ GameObject:
   - component: {fileID: 353459133}
   - component: {fileID: 353459132}
   - component: {fileID: 353459131}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (14)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -942,7 +942,7 @@ GameObject:
   - component: {fileID: 428084759}
   - component: {fileID: 428084758}
   - component: {fileID: 428084757}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (8)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -1160,7 +1160,7 @@ GameObject:
   - component: {fileID: 501237529}
   - component: {fileID: 501237528}
   - component: {fileID: 501237527}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (5)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -2401,7 +2401,7 @@ GameObject:
   - component: {fileID: 692688400}
   - component: {fileID: 692688399}
   - component: {fileID: 692688398}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (6)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -2643,7 +2643,7 @@ GameObject:
   - component: {fileID: 724272206}
   - component: {fileID: 724272205}
   - component: {fileID: 724272204}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (15)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -2752,7 +2752,7 @@ GameObject:
   - component: {fileID: 759819636}
   - component: {fileID: 759819635}
   - component: {fileID: 759819634}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (9)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -3492,7 +3492,7 @@ GameObject:
   - component: {fileID: 1060627877}
   - component: {fileID: 1060627876}
   - component: {fileID: 1060627875}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (2)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -3601,7 +3601,7 @@ GameObject:
   - component: {fileID: 1133546624}
   - component: {fileID: 1133546623}
   - component: {fileID: 1133546622}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (10)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -3843,7 +3843,7 @@ GameObject:
   - component: {fileID: 1177092021}
   - component: {fileID: 1177092020}
   - component: {fileID: 1177092019}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (1)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -4085,7 +4085,7 @@ GameObject:
   - component: {fileID: 1325607184}
   - component: {fileID: 1325607183}
   - component: {fileID: 1325607182}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (12)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -4327,7 +4327,7 @@ GameObject:
   - component: {fileID: 1425371186}
   - component: {fileID: 1425371185}
   - component: {fileID: 1425371184}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (4)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -4480,7 +4480,7 @@ GameObject:
   - component: {fileID: 1504364639}
   - component: {fileID: 1504364638}
   - component: {fileID: 1504364640}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -5332,7 +5332,7 @@ GameObject:
   - component: {fileID: 1997283929}
   - component: {fileID: 1997283928}
   - component: {fileID: 1997283927}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (7)
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -5564,7 +5564,7 @@ GameObject:
   - component: {fileID: 2021415752}
   - component: {fileID: 2021415751}
   - component: {fileID: 2021415750}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (13)
   m_TagString: Terrain
   m_Icon: {fileID: 0}

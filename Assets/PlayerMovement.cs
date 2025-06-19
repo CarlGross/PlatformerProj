@@ -308,32 +308,34 @@ public class PlayerMovement : MonoBehaviour
         GroundActions();
     }
 
+    float TimeVar(float v)
+    {
+        if (v > 0f)
+        {
+            return v - Time.deltaTime;
+        }
+        else
+        {
+            return 0f;
+        }
+    }
+
     void Timer()
     {
-        if (wallJumpTimer > 0f)
+        wallJumpTimer = TimeVar(wallJumpTimer);
+        airStallCooldown = TimeVar(airStallCooldown);
+        attackCooldown = TimeVar(attackCooldown);
+        attackTime = TimeVar(attackTime);
+        boost = TimeVar(boost);
+        iFrames = TimeVar(iFrames);
+        if (iFrames > 0f)
         {
-            wallJumpTimer -= Time.deltaTime;
+            gameObject.GetComponent<SpriteRenderer>().color = Color.black;
         }
-
-        if (airStallCooldown > 0f)
+        else
         {
-            airStallCooldown -= Time.deltaTime;
+            gameObject.GetComponent<SpriteRenderer>().color = Color.white;
         }
-        if (attackCooldown > 0f)
-        {
-            attackCooldown -= Time.deltaTime;
-        }
-        if (attackTime > 0f)
-        {
-            attackTime -= Time.deltaTime;
-        }
-
-        if (boost > 0f)
-        {
-            boost -= Time.deltaTime;
-        }
-
-
 
         if (airStallTimer > 0f)
         {
@@ -698,16 +700,22 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private float iFrames = 0f;
     public void Damage(int dam)
     {
-         if (health <= dam)
-                {
-                    SceneControl.resetScene();
-                }
-                else
-                {
-                    health -= dam;
-                }
+        if (iFrames <= 0f)
+        {
+            if (health <= dam)
+            {
+                SceneControl.resetScene();
+            }
+            else
+            {
+                health -= dam;
+            }
+            iFrames = 1f;
+        }
+       
     }
 
     void OnTriggerEnter(Collider other)

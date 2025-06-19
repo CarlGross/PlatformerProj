@@ -35,7 +35,7 @@ public class ProjectileMovement : MonoBehaviour
             other.GetComponent<PlayerMovement>().Damage(damage);
             Destroy(gameObject);
         }
-        else if (!other.CompareTag("Enemy"))
+        else if (other.CompareTag("Terrain"))
         {
             Destroy(gameObject);
         }

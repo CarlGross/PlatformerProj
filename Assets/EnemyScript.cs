@@ -23,6 +23,8 @@ public class EnemyScript : MonoBehaviour
 
     public GameObject target;
 
+    private Vector3 targetPos;
+
     public bool follow = false;
 
     public bool canFloat = false;
@@ -37,8 +39,12 @@ public class EnemyScript : MonoBehaviour
 
     private Vector3 direction;
 
-    
 
+
+    void UpdatePos()
+    {
+        targetPos = target.transform.position;
+    }
 
 
     bool IsBounce(PlayerMovement player)
@@ -47,12 +53,22 @@ public class EnemyScript : MonoBehaviour
         return Physics.SphereCast(new(transform.position.x, player.prevPos.y + 1.2f, 0f), 1.1f, Vector3.down, out RaycastHit hit, 5f, mask);
     }
 
+    bool CanSee()
+    {
+        int mask = LayerMask.GetMask("Player", "Terrain");
+        return Physics.Raycast(transform.position, (targetPos - transform.position).normalized, out RaycastHit hit, followDistance, mask)
+        && hit.transform.CompareTag("Player");
+    }
+
     void Update()
     {
+        
+        
         if (projectile)
         {
+            UpdatePos();
             Timer();
-            if (fireCoolDown <= 0f)
+            if (fireCoolDown <= 0f && CanSee())
             {
                 fireCoolDown = fireRate;
                 Fire();
@@ -60,11 +76,15 @@ public class EnemyScript : MonoBehaviour
         }
         if (follow)
         {
-            Vector3 t = target.transform.position;
-            Vector3 e = transform.position;
-            float distance = (float)Math.Sqrt(Math.Pow(t.x - e.x, 2.0) + Math.Pow(t.y - e.y, 2.0));
-            if (distance < followDistance)
+            UpdatePos();
+            if (CanSee())
             {
+                Vector3 t = targetPos;
+                Vector3 e = transform.position;
+                // float distance = (float)Math.Sqrt(Math.Pow(t.x - e.x, 2.0) + Math.Pow(t.y - e.y, 2.0));
+                // float distance = Vector3.Distance(e, t);
+                // if (distance < followDistance)
+                // {
                 if (canFloat)
                 {
                     direction = (t - e).normalized;
@@ -85,6 +105,7 @@ public class EnemyScript : MonoBehaviour
                     }
                 }
                 transform.position += speed * Time.deltaTime * direction;
+                // }
             }
         }
     }
