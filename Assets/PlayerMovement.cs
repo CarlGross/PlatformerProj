@@ -125,21 +125,22 @@ public class PlayerMovement : MonoBehaviour
             Timer();
             Inputs();
             UpdateStatus();
+            SetAnimationState();
             HandleState();
     }
 
     //JOSHUA_ADDEDCODE
-    void SetPlayerState(PlayerState newState)
+    void SetAnimationState()
     {
-            state = newState;
-            animator.SetFloat("PlayerState", (float)newState);
+
+        animator.SetFloat("PlayerState", (float)state);
+            // JOSHUA ADDED FOR SEAMLESS SYNC
+        animator.SetFloat("mult", mult);
+        animator.SetFloat("yvel", verticalVelocity);
     }
 
     void UpdateStatus()
     {
-        // JOSHUA ADDED FOR SEAMLESS SYNC
-        animator.SetFloat("mult", mult);
-        animator.SetFloat("yvel", verticalVelocity);
 
         if (controller.isGrounded)
         {
@@ -147,19 +148,19 @@ public class PlayerMovement : MonoBehaviour
             {
                 state = PlayerState.Idle;
                 //JOSHUA_ADDEDCODE
-                SetPlayerState(PlayerState.Idle);
+                //SetPlayerState(PlayerState.Idle);
             }
             else if (mult < 2f)
             {
                 state = PlayerState.Walking;
                 //JOSHUA_ADDEDCODE
-                SetPlayerState(PlayerState.Walking);
+                //SetPlayerState(PlayerState.Walking);
             }
             else
             {
                 state = PlayerState.Running;
                 //JOSHUA_ADDEDCODE
-                SetPlayerState(PlayerState.Running);
+                //SetPlayerState(PlayerState.Running);
             }
 
         }
@@ -167,13 +168,13 @@ public class PlayerMovement : MonoBehaviour
         {
             state = PlayerState.AirStalling;
             //JOSHUA_ADDEDCODE
-            SetPlayerState(PlayerState.AirStalling);
+            //SetPlayerState(PlayerState.AirStalling);
         }
         else if (verticalVelocity > 0f)
         {
             state = PlayerState.Jumping;
             //JOSHUA_ADDEDCODE
-            SetPlayerState(PlayerState.Jumping);
+            //SetPlayerState(PlayerState.Jumping);
         }
         //for wall cooldown way
         //else if (IsTouchingWall() && ((leftWallCooldown <= 0 && LeftWall()) || (rightWallCooldown <= 0 && !LeftWall())))
@@ -183,13 +184,13 @@ public class PlayerMovement : MonoBehaviour
             {
                 state = PlayerState.WallGrinding;
                 //JOSHUA_ADDEDCODE
-                SetPlayerState(PlayerState.WallGrinding);
+                //SetPlayerState(PlayerState.WallGrinding);
             }
             else
             {
                 state = PlayerState.WallSliding;
                 //JOSHUA_ADDEDCODE
-                SetPlayerState(PlayerState.WallSliding);
+                //SetPlayerState(PlayerState.WallSliding);
 
             }
         }
@@ -197,7 +198,7 @@ public class PlayerMovement : MonoBehaviour
         {
             state = PlayerState.Falling;
             //JOSHUA_ADDEDCODE
-            SetPlayerState(PlayerState.Falling);
+            //SetPlayerState(PlayerState.Falling);
         }
         print(state);
 
@@ -244,15 +245,27 @@ public class PlayerMovement : MonoBehaviour
             {
                 lastDirection = Vector3.right;
                 //JOSHUA CODE FOR FLIPPING CHARACTER SPRITE
-                transform.localScale = new Vector3(3, 3, 3);
+                transform.localScale = new Vector3(1, 1, 1);
             }
             else
             {
                 lastDirection = Vector3.left;
                 //JOSHUA CODE FOR FLIPPING CHARACTER SPRITE
-                transform.localScale = new Vector3(-3, 3, 3);
+                transform.localScale = new Vector3(-1, 1, 1);
             }
         }
+        if (wallJumpTimer > 0f)
+        {
+            if (xLock == 1f)
+            {
+                transform.localScale = new Vector3(1, 1, 1);
+            }
+            else
+            {
+                transform.localScale = new Vector3(-1, 1, 1);
+            }
+        }
+
 
     }
 
@@ -555,6 +568,7 @@ public class PlayerMovement : MonoBehaviour
             multLock = 3f;
             velocityInitial = jumpVelocity;
             // rightWallCooldown = 0.7f;
+            
         }
         HandleInAir();
         if (Input.GetAxis("Horizontal") > 0f)
