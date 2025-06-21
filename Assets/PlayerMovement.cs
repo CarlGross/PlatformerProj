@@ -662,6 +662,8 @@ public class PlayerMovement : MonoBehaviour
             dir = AttackDir.Left;
         }
     }
+    public GameObject sword;
+    private AttackAnimScript attackScript;
     void Attack()
     {
         if (initBox)
@@ -689,6 +691,8 @@ public class PlayerMovement : MonoBehaviour
             boxRot = Quaternion.identity;
             center = transform.position + Vector3.left * 1.1f;
         }
+        attackScript = sword.GetComponent<AttackAnimScript>();
+        attackScript.Swing(center - transform.position, boxRot);
         Collider[] hits = Physics.OverlapBox(center, boxSize / 2, boxRot);
         foreach (Collider hit in hits)
         {
@@ -700,7 +704,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-
+    
 
     private void OnDrawGizmos()
     {
