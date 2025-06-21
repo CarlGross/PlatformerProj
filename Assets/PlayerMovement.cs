@@ -18,9 +18,14 @@ public class PlayerMovement : MonoBehaviour
         Falling,
         WallSliding,
         WallGrinding,
-        AirStalling
+        AirStalling,
+        RingHanging
 
     }
+
+    private GameObject ring;
+
+    private bool onRing = false;
 
     public int health = 2;
 
@@ -59,13 +64,9 @@ public class PlayerMovement : MonoBehaviour
 
     private float velocityInitial = -1f;
 
-    public float jumpVelocity = 35f;
+    public const float jumpVelocity = 35f;
 
     private bool canAirStall = true;
-
-    // private float leftWallCooldown = 0f;
-
-    // private float rightWallCooldown = 0f;
 
     private bool shortJump = false;
 
@@ -99,6 +100,10 @@ public class PlayerMovement : MonoBehaviour
 
     //JOSHUA_ADDEDCODE
     private Animator animator;
+    private bool initBox = false;
+
+    public Vector3 prevPos;
+
 
     void Start()
     {
@@ -111,7 +116,7 @@ public class PlayerMovement : MonoBehaviour
 
     void UIUpdate()
     {
-        
+
         if (health != lastHealth)
         {
             ui.UpdateHealthText();
@@ -121,12 +126,14 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-            UIUpdate();
-            Timer();
-            Inputs();
-            UpdateStatus();
-            SetAnimationState();
-            HandleState();
+        
+        prevPos = transform.position;
+        UIUpdate();
+        Timer();
+        Inputs();
+        UpdateStatus();
+         SetAnimationState();
+        HandleState();
     }
 
     //JOSHUA_ADDEDCODE
@@ -164,6 +171,10 @@ public class PlayerMovement : MonoBehaviour
             }
 
         }
+        else if (onRing)
+        {
+            state = PlayerState.RingHanging;
+        }
         else if (airStallTimer > 0f)
         {
             state = PlayerState.AirStalling;
@@ -176,8 +187,6 @@ public class PlayerMovement : MonoBehaviour
             //JOSHUA_ADDEDCODE
             //SetPlayerState(PlayerState.Jumping);
         }
-        //for wall cooldown way
-        //else if (IsTouchingWall() && ((leftWallCooldown <= 0 && LeftWall()) || (rightWallCooldown <= 0 && !LeftWall())))
         else if (IsTouchingWall())
         {
             if (grind)
@@ -204,30 +213,34 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    void HandleState() {
-         switch (state)
-            {
-                case PlayerState.Idle:
-                    HandleIdle();
-                    break;
-                case PlayerState.Walking:
-                case PlayerState.Running:
-                    HandleRunning();
-                    break;
-                case PlayerState.Jumping:
-                    HandleJumping();
-                    break;
-                case PlayerState.Falling:
-                    HandleFalling();
-                    break;
-                case PlayerState.WallSliding:
-                case PlayerState.WallGrinding:
-                    HandleWallSliding();
-                    break;
-                case PlayerState.AirStalling:
-                    HandleAirStalling();
-                    break;
-            }
+    void HandleState()
+    {
+        switch (state)
+        {
+            case PlayerState.Idle:
+                HandleIdle();
+                break;
+            case PlayerState.Walking:
+            case PlayerState.Running:
+                HandleRunning();
+                break;
+            case PlayerState.Jumping:
+                HandleJumping();
+                break;
+            case PlayerState.Falling:
+                HandleFalling();
+                break;
+            case PlayerState.WallSliding:
+            case PlayerState.WallGrinding:
+                HandleWallSliding();
+                break;
+            case PlayerState.AirStalling:
+                HandleAirStalling();
+                break;
+            case PlayerState.RingHanging:
+                HandleRingHanging();
+                break;
+        }
     }
 
     void Inputs()
@@ -276,11 +289,11 @@ public class PlayerMovement : MonoBehaviour
         mult = multLock;
     }
 
-
-    void GeneralMove()
+    void HandleAttack()
     {
-        if (action && attackTime <= 0f && attackCooldown <= 0f)
+         if (action && attackTime <= 0f && attackCooldown <= 0f)
         {
+            initBox = true;
             attackCooldown = 0.6f;
             attackTime = 0.3f;
         }
@@ -288,6 +301,10 @@ public class PlayerMovement : MonoBehaviour
         {
             Attack();
         }
+    }
+    void GeneralMove()
+    {
+        HandleAttack();
 
         if (boost > 0f || wallJumpTimer > 0f)
         {
@@ -302,24 +319,13 @@ public class PlayerMovement : MonoBehaviour
             }
             CheckLastX = false;
         }
-        
-        
+
+
 
         float xVelocity = xInput * speed * mult;
-        // If you want to clamp max x speed
-        // if (Math.Abs(xVelocity) > maxspeed)
-        // {
-        //     if (xVelocity < 0)
-        //     {
-        //         xVelocity = -maxspeed;
-        //     }
-        //     else
-        //     {
-        //         xVelocity = maxspeed;
-        //     }
-        // }
-        // If you want to clamp max y speed
-         if (Math.Abs(verticalVelocity) > maxspeed)
+       
+        // Clamp max y speed
+        if (Math.Abs(verticalVelocity) > maxspeed)
         {
             if (verticalVelocity < 0)
             {
@@ -352,42 +358,34 @@ public class PlayerMovement : MonoBehaviour
         GroundActions();
     }
 
+    float TimeVar(float v)
+    {
+        if (v > 0f)
+        {
+            return v - Time.deltaTime;
+        }
+        else
+        {
+            return 0f;
+        }
+    }
+
     void Timer()
     {
-        if (wallJumpTimer > 0f)
+        wallJumpTimer = TimeVar(wallJumpTimer);
+        airStallCooldown = TimeVar(airStallCooldown);
+        attackCooldown = TimeVar(attackCooldown);
+        attackTime = TimeVar(attackTime);
+        boost = TimeVar(boost);
+        iFrames = TimeVar(iFrames);
+        if (iFrames > 0f)
         {
-            wallJumpTimer -= Time.deltaTime;
+            gameObject.GetComponent<SpriteRenderer>().color = Color.black;
         }
-
-        if (airStallCooldown > 0f)
+        else
         {
-            airStallCooldown -= Time.deltaTime;
+            gameObject.GetComponent<SpriteRenderer>().color = Color.white;
         }
-        if (attackCooldown > 0f)
-        {
-            attackCooldown -= Time.deltaTime;
-        }
-        if (attackTime > 0f)
-        {
-            attackTime -= Time.deltaTime;
-        }
-
-        // if (leftWallCooldown > 0f)
-        // {
-        //     leftWallCooldown -= Time.deltaTime;
-        // }
-
-        // else if (rightWallCooldown > 0f)
-        // {
-        //     rightWallCooldown -= Time.deltaTime;
-        // }
-
-        if (boost > 0f)
-        {
-            boost -= Time.deltaTime;
-        }
-
-
 
         if (airStallTimer > 0f)
         {
@@ -418,7 +416,6 @@ public class PlayerMovement : MonoBehaviour
 
         if (ChangeDirections())
         {
-            // boost = 0f;
             sprintSpeed = 1f;
         }
         mult = 1f;
@@ -488,14 +485,24 @@ public class PlayerMovement : MonoBehaviour
         if (canAirStall && action && airStallTimer <= 0f && airStallCooldown <= 0f)
         {
             airStallCooldown = 0.6f;
-            velocityInitial = 0f;
-            time = 0f;
+            StopJump();
             airStallTimer = 0.3f;
             canAirStall = false;
         }
 
         ApplyGravity();
 
+    }
+
+    bool CheckHead()
+    {
+        return Physics.Raycast(transform.position, Vector3.up, out RaycastHit hit, 1.3f) && hit.transform.CompareTag("Terrain");
+    }
+
+    void StopJump()
+    {
+        velocityInitial = 0f;
+        time = 0f;
     }
 
     void HandleJumping()
@@ -509,6 +516,10 @@ public class PlayerMovement : MonoBehaviour
         {
             verticalVelocity /= 3;
         }
+        if (CheckHead())
+        {
+            StopJump();
+        }
         GeneralMove();
 
     }
@@ -521,23 +532,17 @@ public class PlayerMovement : MonoBehaviour
 
     void HandleLeftWall()
     {
-        grind = false;
-        // rightWallCooldown = 0f;
-
         if (Input.GetAxis("Horizontal") < 0f)
         {
-            time = 0f;
-            velocityInitial = 0f;
+            StopJump();
         }
         if (space)
         {
             wallJumpTimer = 0.5f;
             velocityInitial = jumpVelocity;
-            // mult = mult * 3f / sprintSpeed;
             sprintSpeed = 3f;
             xLock = 1f;
             multLock = 3f;
-            // leftWallCooldown = 0.7f;
         }
         HandleInAir();
         if (Input.GetAxis("Horizontal") < 0f)
@@ -546,22 +551,17 @@ public class PlayerMovement : MonoBehaviour
             verticalVelocity = wallVelocity;
             grind = true;
         }
-        GeneralMove();
+      
     }
 
     void HandleRightWall()
     {
-        grind = false;
-        // leftWallCooldown = 0f;
-
         if (Input.GetAxis("Horizontal") > 0f)
         {
-            time = 0f;
-            velocityInitial = 0f;
+            StopJump();
         }
         if (space)
         {
-            // mult = mult * 3f / sprintSpeed;
             wallJumpTimer = 0.5f;
             sprintSpeed = 3f;
             xLock = -1f;
@@ -576,11 +576,11 @@ public class PlayerMovement : MonoBehaviour
             grind = true;
             verticalVelocity = wallVelocity;
         }
-        GeneralMove();
     }
 
     void HandleWallSliding()
     {
+        grind = false;
         shortJump = false;
         canAirStall = true;
         if (LeftWall())
@@ -591,6 +591,7 @@ public class PlayerMovement : MonoBehaviour
         {
             HandleRightWall();
         }
+        GeneralMove();
     }
 
 
@@ -627,27 +628,66 @@ public class PlayerMovement : MonoBehaviour
         return Physics.Raycast(transform.position, new Vector3(-1f, 0f, 0f), 0.6f);
     }
 
+    Vector3 center;
+    Vector3 boxSize;
+    Quaternion boxRot;
 
+    public enum AttackDir
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    }
+
+    public AttackDir dir;
+
+    void InitializeBox()
+    {
+        boxSize = new(0.6f, 2f, 1f);
+        if (yInput > 0)
+        {
+            dir = AttackDir.Up;
+        }
+        else if (yInput < 0)
+        {
+            dir = AttackDir.Down;
+        }
+        else if (lastDirection.Equals(Vector3.right))
+        {
+            dir = AttackDir.Right;
+        }
+        else
+        {
+            dir = AttackDir.Left;
+        }
+    }
     void Attack()
     {
-        Vector3 center;
-        Vector3 boxSize = new(0.6f, 2f, 1f);
-        Quaternion boxRot;
-        if (yInput > 0)
+        if (initBox)
+        {
+            InitializeBox();
+            initBox = false;
+        }
+        if (dir == AttackDir.Up)
         {
             boxRot = Quaternion.Euler(0f, 0f, 90f);
             center = transform.position + Vector3.up * 1.8f;
         }
-        else if (yInput < 0)
+        else if (dir == AttackDir.Down)
         {
             boxRot = Quaternion.Euler(0f, 0f, 90f);
             center = transform.position + Vector3.down * 1.8f;
         }
+        else if (dir == AttackDir.Right)
+        {
+            boxRot = Quaternion.identity;
+            center = transform.position + Vector3.right * 1.1f;
+        }
         else
         {
-
             boxRot = Quaternion.identity;
-            center = transform.position + lastDirection * 1.1f;
+            center = transform.position + Vector3.left * 1.1f;
         }
         Collider[] hits = Physics.OverlapBox(center, boxSize / 2, boxRot);
         foreach (Collider hit in hits)
@@ -664,41 +704,79 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Vector3 center;
-        Vector3 boxSize = new(0.6f, 2f, 1f);
-        Quaternion boxRot;
-        if (yInput > 0)
+        if (attackTime > 0f)
         {
-            boxRot = Quaternion.Euler(0f, 0f, 90f);
-            center = transform.position + Vector3.up * 1.8f;
+            Gizmos.color = Color.green;
+            Gizmos.matrix = Matrix4x4.TRS(center, boxRot, Vector3.one);
+            Gizmos.DrawWireCube(Vector3.zero, boxSize);
         }
-        else if (yInput < 0)
-        {
-            boxRot = Quaternion.Euler(0f, 0f, 90f);
-            center = transform.position + Vector3.down * 1.8f;
-        }
-        else
-        {
 
-            boxRot = Quaternion.identity;
-            center = transform.position + lastDirection * 1.1f;
-        }
-        Gizmos.color = Color.green;
-        Gizmos.matrix = Matrix4x4.TRS(center, boxRot, Vector3.one);
-        Gizmos.DrawWireCube(Vector3.zero, boxSize);
     }
 
 
-    public void Bounce()
+    public void Bounce(float magnitude = jumpVelocity)
     {
         if (Input.GetKey(KeyCode.Space))
         {
             shortJump = false;
             spaceUp = false;
-       }
+        }
+        else
+        {
+            shortJump = true;
+        }
         canAirStall = true;
         time = 0f;
-        velocityInitial = jumpVelocity;
+        velocityInitial = magnitude;
     }
-    
+
+    void HandleRingHanging()
+    {
+        if (transform.position != ring.transform.position)
+        {
+            float ringSpeed = 10f * Time.deltaTime;
+            Vector3 dir = (ring.transform.position - transform.position).normalized;
+            controller.Move(ringSpeed * dir);
+        }
+        mult = 2.5f;
+        HandleAttack();
+        if (space)
+        {
+            Bounce();
+            onRing = false;
+        }
+        else if (yInput < 0f)
+        {
+            onRing = false;
+            StopJump();
+        }
+    }
+
+    private float iFrames = 0f;
+    public void Damage(int dam)
+    {
+        if (iFrames <= 0f)
+        {
+            if (health <= dam)
+            {
+                SceneControl.resetScene();
+            }
+            else
+            {
+                health -= dam;
+            }
+            iFrames = 1f;
+        }
+       
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Ring"))
+        {
+            onRing = true;
+            ring = other.gameObject;
+        }
+    }
+
 }
