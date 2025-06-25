@@ -27,8 +27,6 @@ public class PlayerMovement : MonoBehaviour
 
     private bool onRing = false;
 
-    public int health = 2;
-
     public bool activeController = true;
 
     public Vector3 lastDirection = Vector3.right;
@@ -84,8 +82,6 @@ public class PlayerMovement : MonoBehaviour
 
     public float airStallCooldown = 0f;
 
-    private int lastHealth;
-
     public UIControl ui;
 
     private bool grind = false;
@@ -104,31 +100,21 @@ public class PlayerMovement : MonoBehaviour
 
     public Vector3 prevPos;
 
+    private PlayerStats stats;
+
 
     void Start()
     {
-        ui.UpdateHealthText();
-        lastHealth = health;
+        stats = GetComponent<PlayerStats>();
         controller = GetComponent<CharacterController>();
         //JOSHUA_ADDEDCODE
         animator = GetComponent<Animator>();
-    }
-
-    void UIUpdate()
-    {
-
-        if (health != lastHealth)
-        {
-            ui.UpdateHealthText();
-        }
-        lastHealth = health;
     }
 
     void Update()
     {
         
         prevPos = transform.position;
-        UIUpdate();
         Timer();
         Inputs();
         UpdateStatus();
@@ -538,6 +524,8 @@ public class PlayerMovement : MonoBehaviour
         }
         if (space)
         {
+            //Remove first line if you want to have a down jump
+            StopJump();
             wallJumpTimer = 0.5f;
             velocityInitial = jumpVelocity;
             sprintSpeed = 3f;
@@ -562,6 +550,8 @@ public class PlayerMovement : MonoBehaviour
         }
         if (space)
         {
+            //Remove first line if you want to have a down jump
+            StopJump();
             wallJumpTimer = 0.5f;
             sprintSpeed = 3f;
             xLock = -1f;
@@ -701,6 +691,10 @@ public class PlayerMovement : MonoBehaviour
                 Destroy(hit.gameObject);
                 canAirStall = true;
             }
+            else if (hit.CompareTag("BreakableTerrain"))
+            {
+                Destroy(hit.gameObject);
+            }
         }
     }
 
@@ -761,14 +755,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (iFrames <= 0f)
         {
-            if (health <= dam)
-            {
-                SceneControl.resetScene();
-            }
-            else
-            {
-                health -= dam;
-            }
+            stats.UpdateHealth(dam);
             iFrames = 1f;
         }
        
