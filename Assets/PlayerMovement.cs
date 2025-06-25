@@ -19,7 +19,8 @@ public class PlayerMovement : MonoBehaviour
         WallSliding,
         WallGrinding,
         AirStalling,
-        RingHanging
+        RingHanging,
+        Plummeting
 
     }
 
@@ -138,6 +139,10 @@ public class PlayerMovement : MonoBehaviour
         {
             state = PlayerState.RingHanging;
         }
+        else if (plummet)
+        {
+            state = PlayerState.Plummeting;
+        }
         else if (airStallTimer > 0f)
         {
             state = PlayerState.AirStalling;
@@ -192,6 +197,10 @@ public class PlayerMovement : MonoBehaviour
             case PlayerState.RingHanging:
                 HandleRingHanging();
                 break;
+            case PlayerState.Plummeting:
+                HandlePlummeting();
+                break;
+
         }
     }
 
@@ -277,6 +286,7 @@ public class PlayerMovement : MonoBehaviour
 
     void GroundActions()
     {
+        plummet = false;
         shortJump = false;
         canAirStall = true;
         velocityInitial = 0f;
@@ -313,6 +323,7 @@ public class PlayerMovement : MonoBehaviour
         attackCooldown = TimeVar(attackCooldown);
         attackTime = TimeVar(attackTime);
         boost = TimeVar(boost);
+        plummetDelay = TimeVar(plummetDelay);
         iFrames = TimeVar(iFrames);
         if (iFrames > 0f)
         {
@@ -414,10 +425,18 @@ public class PlayerMovement : MonoBehaviour
     {
         verticalVelocity = velocityInitial + gravity * time;
     }
-
+    private bool plummet;
     void HandleInAir()
     {
+        // Plummet Initiate
+        if (space && yInput < 0)
+        {
+            initBox = true;
+            plummetDelay = 0.2f;
+            plummet = true;
+        }
 
+        //Airstall Initiate
         if (canAirStall && action && airStallTimer <= 0f && airStallCooldown <= 0f)
         {
             airStallCooldown = 0.6f;
@@ -691,6 +710,15 @@ public class PlayerMovement : MonoBehaviour
         {
             onRing = false;
             StopJump();
+        }
+    }
+    private float plummetDelay;
+    void HandlePlummeting()
+    {
+        if (plummetDelay <= 0)
+        {
+            controller.Move(Vector3.down * Time.deltaTime * 30f);
+            Attack();
         }
     }
 
