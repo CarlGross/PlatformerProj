@@ -19,15 +19,14 @@ public class PlayerMovement : MonoBehaviour
         WallSliding,
         WallGrinding,
         AirStalling,
-        RingHanging
+        RingHanging,
+        Plummeting
 
     }
 
     private GameObject ring;
 
     private bool onRing = false;
-
-    public int health = 2;
 
     public bool activeController = true;
 
@@ -84,8 +83,6 @@ public class PlayerMovement : MonoBehaviour
 
     public float airStallCooldown = 0f;
 
-    private int lastHealth;
-
     public UIControl ui;
 
     private bool grind = false;
@@ -104,31 +101,21 @@ public class PlayerMovement : MonoBehaviour
 
     public Vector3 prevPos;
 
+    private PlayerStats stats;
+
 
     void Start()
     {
-        ui.UpdateHealthText();
-        lastHealth = health;
+        stats = GetComponent<PlayerStats>();
         controller = GetComponent<CharacterController>();
         //JOSHUA_ADDEDCODE
         animator = GetComponent<Animator>();
-    }
-
-    void UIUpdate()
-    {
-
-        if (health != lastHealth)
-        {
-            ui.UpdateHealthText();
-        }
-        lastHealth = health;
     }
 
     void Update()
     {
         
         prevPos = transform.position;
-        UIUpdate();
         Timer();
         Inputs();
         UpdateStatus();
@@ -174,6 +161,10 @@ public class PlayerMovement : MonoBehaviour
         else if (onRing)
         {
             state = PlayerState.RingHanging;
+        }
+        else if (plummet)
+        {
+            state = PlayerState.Plummeting;
         }
         else if (airStallTimer > 0f)
         {
@@ -240,6 +231,10 @@ public class PlayerMovement : MonoBehaviour
             case PlayerState.RingHanging:
                 HandleRingHanging();
                 break;
+            case PlayerState.Plummeting:
+                HandlePlummeting();
+                break;
+
         }
     }
 
@@ -341,6 +336,7 @@ public class PlayerMovement : MonoBehaviour
 
     void GroundActions()
     {
+        plummet = false;
         shortJump = false;
         canAirStall = true;
         velocityInitial = 0f;
@@ -377,6 +373,7 @@ public class PlayerMovement : MonoBehaviour
         attackCooldown = TimeVar(attackCooldown);
         attackTime = TimeVar(attackTime);
         boost = TimeVar(boost);
+        plummetDelay = TimeVar(plummetDelay);
         iFrames = TimeVar(iFrames);
         if (iFrames > 0f)
         {
@@ -478,10 +475,18 @@ public class PlayerMovement : MonoBehaviour
     {
         verticalVelocity = velocityInitial + gravity * time;
     }
-
+    private bool plummet;
     void HandleInAir()
     {
+        // Plummet Initiate
+        if (space && yInput < 0)
+        {
+            initBox = true;
+            plummetDelay = 0.2f;
+            plummet = true;
+        }
 
+        //Airstall Initiate
         if (canAirStall && action && airStallTimer <= 0f && airStallCooldown <= 0f)
         {
             airStallCooldown = 0.6f;
@@ -538,6 +543,8 @@ public class PlayerMovement : MonoBehaviour
         }
         if (space)
         {
+            //Remove first line if you want to have a down jump
+            StopJump();
             wallJumpTimer = 0.5f;
             velocityInitial = jumpVelocity;
             sprintSpeed = 3f;
@@ -562,6 +569,8 @@ public class PlayerMovement : MonoBehaviour
         }
         if (space)
         {
+            //Remove first line if you want to have a down jump
+            StopJump();
             wallJumpTimer = 0.5f;
             sprintSpeed = 3f;
             xLock = -1f;
@@ -701,6 +710,10 @@ public class PlayerMovement : MonoBehaviour
                 Destroy(hit.gameObject);
                 canAirStall = true;
             }
+            else if (hit.CompareTag("BreakableTerrain"))
+            {
+                Destroy(hit.gameObject);
+            }
         }
     }
 
@@ -755,20 +768,22 @@ public class PlayerMovement : MonoBehaviour
             StopJump();
         }
     }
+    private float plummetDelay;
+    void HandlePlummeting()
+    {
+        if (plummetDelay <= 0)
+        {
+            controller.Move(Vector3.down * Time.deltaTime * 30f);
+            Attack();
+        }
+    }
 
     private float iFrames = 0f;
     public void Damage(int dam)
     {
         if (iFrames <= 0f)
         {
-            if (health <= dam)
-            {
-                SceneControl.resetScene();
-            }
-            else
-            {
-                health -= dam;
-            }
+            stats.UpdateHealth(dam);
             iFrames = 1f;
         }
        
