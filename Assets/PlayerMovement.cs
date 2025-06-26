@@ -166,7 +166,7 @@ public class PlayerMovement : MonoBehaviour
         {
             state = PlayerState.Falling;
         }
-        print(state);
+        
 
     }
 
@@ -204,9 +204,21 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    Vector3 direction;
     void Inputs()
     {
         lastXInput = xInput;
+        if (xInput != 0)
+        {
+            if (xInput > 0f)
+            {
+                lastDirection = Vector3.right;
+            }
+            else
+            {
+                lastDirection = Vector3.left;
+            }
+        }
         yInput = Input.GetAxis("Vertical");
         xInput = Input.GetAxis("Horizontal");
         space = Input.GetKeyDown(KeyCode.Space);
@@ -217,11 +229,11 @@ public class PlayerMovement : MonoBehaviour
         {
             if (xInput > 0f)
             {
-                lastDirection = Vector3.right;
+                direction = Vector3.right;
             }
             else
             {
-                lastDirection = Vector3.left;
+                direction = Vector3.left;
             }
         }
 
@@ -239,7 +251,7 @@ public class PlayerMovement : MonoBehaviour
          if (action && attackTime <= 0f && attackCooldown <= 0f)
         {
             initBox = true;
-            attackCooldown = 0.6f;
+            attackCooldown = 0.5f;
             attackTime = 0.3f;
         }
         if (attackTime > 0f)
@@ -250,6 +262,7 @@ public class PlayerMovement : MonoBehaviour
     void GeneralMove()
     {
         HandleAttack();
+        print(xInput);
 
         if (boost > 0f || wallJumpTimer > 0f)
         {
@@ -257,7 +270,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else if (CheckLastX)
         {
-            if (xInput != xLock)
+            if (direction.x != xLock)
             {
                 mult = 1f;
                 sprintSpeed = 1f;
@@ -318,6 +331,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Timer()
     {
+        plummetCD = TimeVar(plummetCD);
         wallJumpTimer = TimeVar(wallJumpTimer);
         airStallCooldown = TimeVar(airStallCooldown);
         attackCooldown = TimeVar(attackCooldown);
@@ -342,7 +356,6 @@ public class PlayerMovement : MonoBehaviour
                 airStallTimer = 0f;
             }
         }
-
         else
         {
             time += Time.deltaTime;
@@ -351,7 +364,7 @@ public class PlayerMovement : MonoBehaviour
 
     bool ChangeDirections()
     {
-        if (xInput != lastXInput)
+        if (direction != lastDirection)
         {
             return true;
         }
@@ -366,7 +379,7 @@ public class PlayerMovement : MonoBehaviour
             sprintSpeed = 1f;
         }
         mult = 1f;
-        if (action && sprintSpeed > 1f && boost <= 0f && attackCooldown <= 0f)
+        if (action && sprintSpeed <= 2.6f && sprintSpeed > 1f && boost <= 0f && attackCooldown <= 0f)
         {
             if (sprintSpeed < 2f)
             {
@@ -374,9 +387,9 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                sprintSpeed = 3f;
+                sprintSpeed = 3.5f;
             }
-            boost = 0.5f;
+            boost = 0.4f;
             multLock = sprintSpeed;
             xLock = xInput;
         }
@@ -429,7 +442,7 @@ public class PlayerMovement : MonoBehaviour
     void HandleInAir()
     {
         // Plummet Initiate
-        if (space && yInput < 0)
+        if (space && yInput < 0 && plummetCD <= 0)
         {
             initBox = true;
             plummetDelay = 0.2f;
@@ -713,9 +726,17 @@ public class PlayerMovement : MonoBehaviour
         }
     }
     private float plummetDelay;
+
+    private float plummetCD;
     void HandlePlummeting()
     {
-        if (plummetDelay <= 0)
+        if (spaceUp)
+        {
+            plummetCD = 0.2f;
+            plummet = false;
+            StopJump();
+        }
+        else if (plummetDelay <= 0)
         {
             controller.Move(Vector3.down * Time.deltaTime * 30f);
             Attack();
