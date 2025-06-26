@@ -1175,7 +1175,10 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of 1a6e500 (Merge branch 'Carl-Branch' into Animation)
 =======
 >>>>>>> parent of 1a6e500 (Merge branch 'Carl-Branch' into Animation)
 --- !u!1 &483593943
@@ -1247,7 +1250,11 @@ SpriteRenderer:
   m_FlipY: 0
   m_DrawMode: 0
 <<<<<<< HEAD
+<<<<<<< HEAD
   m_Size: {x: 1.75, y: 0.3125}
+=======
+  m_Size: {x: 1.8333334, y: 0.41666666}
+>>>>>>> parent of 1a6e500 (Merge branch 'Carl-Branch' into Animation)
 =======
   m_Size: {x: 1.8333334, y: 0.41666666}
 >>>>>>> parent of 1a6e500 (Merge branch 'Carl-Branch' into Animation)
@@ -1307,7 +1314,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 325629444}
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 07af237 (Added WallHang and Air stall / Also Adjusted attack swing)
+=======
+>>>>>>> parent of 1a6e500 (Merge branch 'Carl-Branch' into Animation)
 =======
 >>>>>>> parent of 1a6e500 (Merge branch 'Carl-Branch' into Animation)
 --- !u!1 &501237526
