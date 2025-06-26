@@ -1,29 +1,18 @@
 using TMPro;
 using UnityEngine;
 
-public class UIControl : MonoBehaviour
+public class UIControl: MonoBehaviour
 {
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public Canvas canvas;
     public TMP_Text healthTextBox;
-    public GameObject player;
-    private PlayerStats stats;
+    public PlayerMovement player;
 
-    public TMP_Text medalTextBox;
 
-    void Start()
-    {
-        stats = player.GetComponent<PlayerStats>();
-        UpdateHealthText();
-        UpdateMedalText();
-    }
+    // Update is called once per frame
     public void UpdateHealthText()
     {
-
-        healthTextBox.text = "Health: " + stats.health.ToString();
+       
+        healthTextBox.text = "Health: " + player.health.ToString();
     }
-
-    public void UpdateMedalText()
-    {
-        medalTextBox.text = "Medals: " + stats.medals.ToString();
-    }
-
 }

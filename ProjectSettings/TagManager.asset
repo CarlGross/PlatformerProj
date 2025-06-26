@@ -7,8 +7,6 @@ TagManager:
   - Enemy
   - Terrain
   - Ring
-  - BreakableTerrain
-  - Coin
   layers:
   - Default
   - TransparentFX
