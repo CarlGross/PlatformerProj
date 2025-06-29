@@ -247,10 +247,12 @@ public class PlayerMovement : MonoBehaviour
             if (xInput > 0f)
             {
                 lastDirection = Vector3.right;
+                transform.localScale = new Vector3(1f, 1f, 1f);
             }
             else
             {
                 lastDirection = Vector3.left;
+                transform.localScale = new Vector3(-1f, 1f, 1f);
             }
         }
         yInput = Input.GetAxis("Vertical");

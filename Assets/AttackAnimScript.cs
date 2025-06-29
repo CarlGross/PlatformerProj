@@ -19,6 +19,8 @@ public class AttackAnimScript : MonoBehaviour
     {
         transform.rotation = rot;
         swordOffSet = offset;
-        GetComponent<Animator>().Play("SwordSwingNew");
+        GetComponent<Animator>().ResetTrigger("Attack");
+        GetComponent<Animator>().SetTrigger("Attack");
+        GetComponent<Animator>().Play("SwordSingle");
     }
 }
